@@ -293,8 +293,8 @@ public:
 // The Masternode Broadcast Class : Contains a different serialize method for sending masternodes through the network
 //
 
-{
 class CMasternodeBroadcast : public CMasternode
+{
 public:
     CMasternodeBroadcast();
     CMasternodeBroadcast(CService newAddr, CTxIn newVin, int newTier, CPubKey newPubkey, CPubKey newPubkey2, int protocolVersionIn);
