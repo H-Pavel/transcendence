@@ -5,7 +5,7 @@
 #include "masternode-tiers.h"
 #include "amount.h"
 
-bool IsMasternodeOutput(CWalletTx* tx, int index)
+bool IsMasternodeOutput(const CWalletTx* tx, int index)
 {
     bool bFound = false;
 

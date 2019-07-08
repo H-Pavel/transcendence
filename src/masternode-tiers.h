@@ -13,7 +13,7 @@ const int MASTERNODE_TIER_COINS[MasternodeTiers::TIER_NONE] = {1000, 3000, 10000
 const double TIER_OBFUSCATION_VALUES[MasternodeTiers::TIER_NONE] = {999.99, 2999.99, 9999.99, 29999.99, 99999.99};
 
 
-bool IsMasternodeOutput(CWalletTx* tx, int index);
+bool IsMasternodeOutput(const CWalletTx* tx, int index);
 int GetMasternodeTierFromOutput(COutput& out);
 double GetObfuscationValueForTier(int nTier);
 
