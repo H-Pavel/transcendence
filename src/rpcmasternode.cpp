@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2019 The Transcendence developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -430,7 +431,9 @@ Value masternodedebug (const Array& params, bool fHelp)
     CTxIn vin = CTxIn();
     CPubKey pubkey = CScript();
     CKey key;
-    if (!activeMasternode.GetMasterNodeVin(vin, pubkey, key))
+    int tier;
+
+    if (!activeMasternode.GetMasterNodeVin(vin, tier, pubkey, key))
         throw runtime_error("Missing masternode input, please look at the documentation for instructions on masternode creation\n");
     else
         return activeMasternode.GetStatus();
