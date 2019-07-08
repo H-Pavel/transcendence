@@ -9,7 +9,7 @@ bool IsMasternodeOutput(const CWalletTx* tx, int index)
 {
     bool bFound = false;
 
-    for (auto tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
+    for (int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
         if (tx->vout[index].nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
             bFound = true;
             break;
@@ -22,7 +22,7 @@ int GetMasternodeTierFromOutput(COutput& out)
 {
     int tierRet = MasternodeTiers::TIER_NONE;
 
-    for (auto tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
+    for (int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
         if (out.tx->vout[out.i].nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
             tierRet = tier;
             break;
