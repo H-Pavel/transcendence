@@ -388,7 +388,7 @@ am__libbitcoin_util_a_SOURCES_DIST = allocators.cpp compat/strnlen.cpp \
 	db.h eccryptoverify.h ecwrapper.h hash.h init.h kernel.h \
 	swifttx.h key.h keystore.h leveldbwrapper.h limitedmap.h \
 	main.h masternode.h masternode-payments.h masternode-budget.h \
-	masternode-sync.h masternodeman.h masternodeconfig.h \
+	masternode-sync.h masternode-tiers.h masternodeman.h masternodeconfig.h \
 	merkleblock.h miner.h mruset.h netbase.h net.h noui.h pow.h \
 	protocol.h pubkey.h random.h reverse_iterate.h rpcclient.h \
 	rpcprotocol.h rpcserver.h script/interpreter.h script/script.h \
@@ -436,6 +436,7 @@ am_libbitcoin_wallet_a_OBJECTS =  \
 	libbitcoin_wallet_a-masternode-budget.$(OBJEXT) \
 	libbitcoin_wallet_a-masternode-payments.$(OBJEXT) \
 	libbitcoin_wallet_a-masternode-sync.$(OBJEXT) \
+	libbitcoin_wallet_a-masternode-tiers.$(OBJEXT) \
 	libbitcoin_wallet_a-masternodeconfig.$(OBJEXT) \
 	libbitcoin_wallet_a-masternodeman.$(OBJEXT) \
 	libbitcoin_wallet_a-rpcdump.$(OBJEXT) \
@@ -1080,6 +1081,7 @@ am__depfiles_remade = ./$(DEPDIR)/libbitcoin_cli_a-rpcclient.Po \
 	./$(DEPDIR)/libbitcoin_wallet_a-masternode-budget.Po \
 	./$(DEPDIR)/libbitcoin_wallet_a-masternode-payments.Po \
 	./$(DEPDIR)/libbitcoin_wallet_a-masternode-sync.Po \
+	./$(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Po \
 	./$(DEPDIR)/libbitcoin_wallet_a-masternode.Po \
 	./$(DEPDIR)/libbitcoin_wallet_a-masternodeconfig.Po \
 	./$(DEPDIR)/libbitcoin_wallet_a-masternodeman.Po \
@@ -3575,6 +3577,7 @@ include ./$(DEPDIR)/libbitcoin_wallet_a-kernel.Po # am--include-marker
 include ./$(DEPDIR)/libbitcoin_wallet_a-masternode-budget.Po # am--include-marker
 include ./$(DEPDIR)/libbitcoin_wallet_a-masternode-payments.Po # am--include-marker
 include ./$(DEPDIR)/libbitcoin_wallet_a-masternode-sync.Po # am--include-marker
+include ./$(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Po # am--include-marker
 include ./$(DEPDIR)/libbitcoin_wallet_a-masternode.Po # am--include-marker
 include ./$(DEPDIR)/libbitcoin_wallet_a-masternodeconfig.Po # am--include-marker
 include ./$(DEPDIR)/libbitcoin_wallet_a-masternodeman.Po # am--include-marker
@@ -5491,6 +5494,20 @@ libbitcoin_wallet_a-masternode-sync.obj: masternode-sync.cpp
 #	$(AM_V_CXX)source='masternode-sync.cpp' object='libbitcoin_wallet_a-masternode-sync.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_wallet_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_wallet_a-masternode-sync.obj `if test -f 'masternode-sync.cpp'; then $(CYGPATH_W) 'masternode-sync.cpp'; else $(CYGPATH_W) '$(srcdir)/masternode-sync.cpp'; fi`
+
+libbitcoin_wallet_a-masternode-tiers.o: masternode-tiers.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_wallet_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_wallet_a-masternode-tiers.o -MD -MP -MF $(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Tpo -c -o libbitcoin_wallet_a-masternode-tiers.o `test -f 'masternode-tiers.cpp' || echo '$(srcdir)/'`masternode-tiers.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Tpo $(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Po
+#	$(AM_V_CXX)source='masternode-tiers.cpp' object='libbitcoin_wallet_a-masternode-tiers.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_wallet_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_wallet_a-masternode-tiers.o `test -f 'masternode-tiers.cpp' || echo '$(srcdir)/'`masternode-tiers.cpp
+
+libbitcoin_wallet_a-masternode-tiers.obj: masternode-tiers.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_wallet_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_wallet_a-masternode-tiers.obj -MD -MP -MF $(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Tpo -c -o libbitcoin_wallet_a-masternode-tiers.obj `if test -f 'masternode-tiers.cpp'; then $(CYGPATH_W) 'masternode-tiers.cpp'; else $(CYGPATH_W) '$(srcdir)/masternode-tiers.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Tpo $(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Po
+#	$(AM_V_CXX)source='masternode-tiers.cpp' object='libbitcoin_wallet_a-masternode-tiers.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_wallet_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_wallet_a-masternode-tiers.obj `if test -f 'masternode-tiers.cpp'; then $(CYGPATH_W) 'masternode-tiers.cpp'; else $(CYGPATH_W) '$(srcdir)/masternode-tiers.cpp'; fi`
 
 libbitcoin_wallet_a-masternodeconfig.o: masternodeconfig.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_wallet_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_wallet_a-masternodeconfig.o -MD -MP -MF $(DEPDIR)/libbitcoin_wallet_a-masternodeconfig.Tpo -c -o libbitcoin_wallet_a-masternodeconfig.o `test -f 'masternodeconfig.cpp' || echo '$(srcdir)/'`masternodeconfig.cpp
@@ -8642,6 +8659,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode-budget.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode-payments.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode-sync.Po
+	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternodeconfig.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternodeman.Po
@@ -9009,6 +9027,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode-budget.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode-payments.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode-sync.Po
+	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode-tiers.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternode.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternodeconfig.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_wallet_a-masternodeman.Po
