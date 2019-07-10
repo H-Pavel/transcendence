@@ -170,19 +170,24 @@ uint256 CMasternode::CalculateScore(int mod, int64_t nBlockHeight)
     if (chainActive.Tip() == NULL) return 0;
 
     uint256 hash = 0;
-    uint256 aux = vin.prevout.hash + vin.prevout.n;
 
     if (!GetBlockHash(hash, nBlockHeight)) {
         LogPrint("masternode","CalculateScore ERROR - nHeight %d - Returned 0\n", nBlockHeight);
         return 0;
     }
+    return CalculateScore(hash);
+}
+
+uint256 CMasternode::CalculateScore(uint256 blockHash)
+{
+    uint256 aux = vin.prevout.hash + vin.prevout.n;
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-    ss << hash;
+    ss << blockHash;
     uint256 hash2 = ss.GetHash();
 
     CHashWriter ss2(SER_GETHASH, PROTOCOL_VERSION);
-    ss2 << hash;
+    ss2 << blockHash;
     ss2 << aux;
     uint256 hash3 = ss2.GetHash();
 

@@ -8,6 +8,7 @@
 #include "activemasternode.h"
 #include "addrman.h"
 #include "masternode.h"
+#include "masternode-tiers.h"
 #include "obfuscation.h"
 #include "spork.h"
 #include "util.h"
@@ -479,19 +480,19 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
 {
     LOCK(cs);
 
-    CMasternode* pBestMasternode = NULL;
-    std::vector<pair<int64_t, CTxIn> > vecMasternodeLastPaid;
+    std::vector<pair<int64_t, CTxIn>> vecMasternodeTiers[MasternodeTiers::TIER_NONE];
 
     /*
-        Make a vector with all of the last paid times
+        Make a vector with all of the last paid times of masternodes for every tier
     */
 
     int nMnCount = CountEnabled();
+    nCount = 0;
     BOOST_FOREACH (CMasternode& mn, vMasternodes) {
         mn.Check();
         if (!mn.IsEnabled()) continue;
 
-        // //check protocol version
+        //check protocol version
         if (mn.protocolVersion < masternodePayments.GetMinMasternodePaymentsProto()) continue;
 
         //it's in the list (up to 8 entries ahead of current block to allow propagation) -- so let's skip it
@@ -503,29 +504,47 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         //make sure it has as many confirmations as there are masternodes
         if (mn.GetMasternodeInputAge() < nMnCount) continue;
 
-        vecMasternodeLastPaid.push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
+        vecMasternodeTiers[mn.tier].push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
+        nCount++;
     }
-
-    nCount = (int)vecMasternodeLastPaid.size();
 
     //when the network is in the process of upgrading, don't penalize nodes that recently restarted
     if (fFilterSigTime && nCount < nMnCount / 3) return GetNextMasternodeInQueueForPayment(nBlockHeight, false, nCount);
 
-    // Sort them high to low
+    uint256 blockHash = 0;
+    if (!GetBlockHash(blockHash, nBlockHeight - 100)) {
+        LogPrint("masternodeman", "GetNextMasternodeInQueueForPayment ERROR - nHeight %d - Returned 0\n", nBlockHeight - 100);
+        return NULL;
+    }
+
+    std::vector<size_t> vecSizes;
+    for (auto i = 0; i < MasternodeTiers::TIER_NONE; i++) {
+        vecSizes.push_back(vecMasternodeTiers[i].size());
+    }
+
+    int nTier = CalculateWinningTier(vecSizes, blockHash);
+    return GetWinningNode(vecMasternodeTiers[nTier], blockHash);
+}
+
+CMasternode* CMasternodeMan::GetWinningNode(std::vector<pair<int64_t, CTxIn>>& vecMasternodeLastPaid, uint256 blockHash)
+{
+    CMasternode* pBestMasternode = NULL;
+
+    // Sort vector of last paid times high to low
     sort(vecMasternodeLastPaid.rbegin(), vecMasternodeLastPaid.rend(), CompareLastPaid());
 
     // Look at 1/10 of the oldest nodes (by last payment), calculate their scores and pay the best one
     //  -- This doesn't look at who is being paid in the +8-10 blocks, allowing for double payments very rarely
     //  -- 1/100 payments should be a double payment on mainnet - (1/(3000/10))*2
     //  -- (chance per block * chances before IsScheduled will fire)
-    int nTenthNetwork = CountEnabled() / 10;
+    int nTenthNetwork = vecMasternodeLastPaid.size() > 10 ? vecMasternodeLastPaid.size() / 10 : vecMasternodeLastPaid.size();
     int nCountTenth = 0;
     uint256 nHigh = 0;
     BOOST_FOREACH (PAIRTYPE(int64_t, CTxIn) & s, vecMasternodeLastPaid) {
         CMasternode* pmn = Find(s.second);
         if (!pmn) break;
 
-        uint256 n = pmn->CalculateScore(1, nBlockHeight - 100);
+        uint256 n = pmn->CalculateScore(blockHash);
         if (n > nHigh) {
             nHigh = n;
             pBestMasternode = pmn;

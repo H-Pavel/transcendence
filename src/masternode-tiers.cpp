@@ -40,3 +40,58 @@ double GetObfuscationValueForTier(int nTier)
         return TIER_OBFUSCATION_VALUES[nTier];
     }
 }
+
+int CalculateWinningTier(std::vector<int>& vecTierSizes, uint256 blockHash)
+{
+    const int distribution[MasternodeTiers::TIER_NONE] = {1, 3, 10, 30, 100};
+    double nDenominator = 0; // Summ( distribution[i]*count[i] )
+    int nMod = 0; // modulus = Summ( distribution[i] )
+
+    //Contains pairs <tier number, weighted value>
+    std::vector<std::pair<size_t, size_t>> weightedDistribution;
+
+    //Select tiers which contain nodes
+    for (auto i = 0; i < MasternodeTiers::TIER_NONE; i++) {
+        if (vecTierSizes[i] > 0) {
+            nMod += distribution[i];
+            nDenominator += distribution[i] * vecTierSizes[i];
+            weightedDistribution.push_back(make_pair(i, 0));
+        }
+    }
+
+    //Stop calculation if there are no nodes or the only single tier is presented in the network
+    if (weightedDistribution.size() == 0) {
+        return MasternodeTiers::TIER_NONE;
+    }
+    else if (weightedDistribution.size() == 1) {
+        return weightedDistribution[0].first;
+    }
+
+    int nPreviousWeight = 0;
+    for (auto j = 0; j < weightedDistribution.size() - 1; j++) {
+        auto curTier = weightedDistribution[j].first;
+
+        //Calculate weighted distribution: WD = modulus * (distribution*count) / ( Summ(distribution[i]*count[i]) )
+        int weightedValue = round(vecTierSizes[curTier] * distribution[curTier] * nMod * 1.0 / nDenominator);
+        if (weightedValue == 0) {
+            weightedValue = 1;
+        }
+        //Convert weighted distribution to the percent of the modulus
+        weightedDistribution[j].second = nPreviousWeight;
+        weightedDistribution[j].second += weightedValue;
+        nPreviousWeight = weightedValue;
+    }
+    weightedDistribution[weightedDistribution.size() - 1] = nMod;
+    //Now distribution is converted from values [1,3,10,30,100] to the weighted percents, e.g. [1, 4, 14, 44, 144] for modulus = 144
+
+    int nWinningTier = MasternodeTiers::TIER_NONE;
+    int nCheckNumber = blockHash % nMod;
+    for (auto k = 0; k < weightedDistribution.size(); k++) {
+        if (nCheckNumber < weightedDistribution[k].second) {
+            nWinningTier = weightedDistribution[k].first;
+            break;
+        }
+    }
+
+    return nWinningTier;
+}

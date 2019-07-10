@@ -194,6 +194,7 @@ public:
     }
 
     uint256 CalculateScore(int mod = 1, int64_t nBlockHeight = 0);
+    uint256 CalculateScore(uint256 blockHash);
 
     ADD_SERIALIZE_METHODS;
 
