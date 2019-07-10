@@ -41,7 +41,7 @@ double GetObfuscationValueForTier(int nTier)
     }
 }
 
-unsigned int CalculateWinningTier(std::vector<int>& vecTierSizes, uint256 blockHash)
+unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blockHash)
 {
     const unsigned int distribution[MasternodeTiers::TIER_NONE] = {1, 3, 10, 30, 100};
     double nDenominator = 0; // Summ( distribution[i]*count[i] )
@@ -81,11 +81,11 @@ unsigned int CalculateWinningTier(std::vector<int>& vecTierSizes, uint256 blockH
         weightedDistribution[j].second += weightedValue;
         nPreviousWeight = weightedValue;
     }
-    weightedDistribution[weightedDistribution.size() - 1] = nMod;
+    weightedDistribution[weightedDistribution.size() - 1].second = nMod;
     //Now distribution is converted from values [1,3,10,30,100] to the weighted percents, e.g. [1, 4, 14, 44, 144] for modulus = 144
 
     int nWinningTier = MasternodeTiers::TIER_NONE;
-    int nCheckNumber = blockHash % nMod;
+    unsigned int nCheckNumber = (unsigned long long)(blockHash.getdouble()) % nMod;
     for (auto k = 0; k < weightedDistribution.size(); k++) {
         if (nCheckNumber < weightedDistribution[k].second) {
             nWinningTier = weightedDistribution[k].first;
