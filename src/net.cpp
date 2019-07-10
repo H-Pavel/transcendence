@@ -19,6 +19,7 @@
 #include "primitives/transaction.h"
 #include "ui_interface.h"
 #include "wallet.h"
+#include "spork.h"
 
 #ifdef WIN32
 #include <string.h>
@@ -441,6 +442,15 @@ CNode* ConnectNode(CAddress addrConnect, const char* pszDest, bool obfuScationMa
     }
 
     return NULL;
+}
+
+const MessageStartChars& GetCurrentMessageStart()
+{
+    if (IsSporkActive(SPORK_17_MAGIC_HEADER_UPDATE))
+    {
+        return Params().MessageStartNew();
+    }
+    return Params().MessageStart();
 }
 
 void CNode::CloseSocketDisconnect()
@@ -1825,7 +1835,7 @@ bool CAddrDB::Write(const CAddrMan& addr)
 
     // serialize addresses, checksum data up to that point, then append csum
     CDataStream ssPeers(SER_DISK, CLIENT_VERSION);
-    ssPeers << FLATDATA(Params().MessageStart());
+    ssPeers << FLATDATA(GetCurrentMessageStart());
     ssPeers << addr;
     uint256 hash = Hash(ssPeers.begin(), ssPeers.end());
     ssPeers << hash;
@@ -1889,7 +1899,7 @@ bool CAddrDB::Read(CAddrMan& addr)
         ssPeers >> FLATDATA(pchMsgTmp);
 
         // ... verify the network matches ours
-        if (memcmp(pchMsgTmp, Params().MessageStart(), sizeof(pchMsgTmp)))
+        if (memcmp(pchMsgTmp, GetCurrentMessageStart(), sizeof(pchMsgTmp)))
             return error("%s : Invalid network magic number", __func__);
 
         // de-serialize address data into one CAddrMan object

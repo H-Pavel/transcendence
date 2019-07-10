@@ -23,6 +23,15 @@ CCriticalSection cs_vecPayments;
 CCriticalSection cs_mapMasternodeBlocks;
 CCriticalSection cs_mapMasternodePayeeVotes;
 
+const MessageStartChars& GetCurrentMessageStart()
+{
+    if (IsSporkActive(SPORK_17_MAGIC_HEADER_UPDATE))
+    {
+        return Params().MessageStartNew();
+    }
+    return Params().MessageStart();
+}
+
 //
 // CMasternodePaymentDB
 //
@@ -40,7 +49,7 @@ bool CMasternodePaymentDB::Write(const CMasternodePayments& objToSave)
     // serialize, checksum data up to that point, then append checksum
     CDataStream ssObj(SER_DISK, CLIENT_VERSION);
     ssObj << strMagicMessage;                   // masternode cache file specific magic message
-    ssObj << FLATDATA(Params().MessageStart()); // network specific magic number
+    ssObj << FLATDATA(GetCurrentMessageStart()); // network specific magic number
     ssObj << objToSave;
     uint256 hash = Hash(ssObj.begin(), ssObj.end());
     ssObj << hash;
@@ -121,7 +130,7 @@ CMasternodePaymentDB::ReadResult CMasternodePaymentDB::Read(CMasternodePayments&
         ssObj >> FLATDATA(pchMsgTmp);
 
         // ... verify the network matches ours
-        if (memcmp(pchMsgTmp, Params().MessageStart(), sizeof(pchMsgTmp))) {
+        if (memcmp(pchMsgTmp, GetCurrentMessageStart(), sizeof(pchMsgTmp))) {
             error("%s : Invalid network magic number", __func__);
             return IncorrectMagicNumber;
         }

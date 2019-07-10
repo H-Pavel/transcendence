@@ -47,6 +47,7 @@ public:
 
     const uint256& HashGenesisBlock() const { return hashGenesisBlock; }
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
+    const MessageStartChars& MessageStartNew() const { return pchMessageStartTranscendence; }
     const std::vector<unsigned char>& AlertKey() const { return vAlertPubKey; }
     int GetDefaultPort() const { return nDefaultPort; }
     const uint256& ProofOfWorkLimit() const { return bnProofOfWorkLimit; }
@@ -124,6 +125,7 @@ protected:
 
     uint256 hashGenesisBlock;
     MessageStartChars pchMessageStart;
+    MessageStartChars pchMessageStartTranscendence;
     //! Raw pub key bytes for the broadcast alert signing key.
     std::vector<unsigned char> vAlertPubKey;
     int nDefaultPort;

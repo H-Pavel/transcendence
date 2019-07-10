@@ -33,9 +33,18 @@ static const char* ppszTypeName[] =
         "mn ping",
         "dstx"};
 
+const MessageStartChars& GetCurrentMessageStart()
+{
+    if (IsSporkActive(SPORK_17_MAGIC_HEADER_UPDATE))
+    {
+        return Params().MessageStartNew();
+    }
+    return Params().MessageStart();
+}
+
 CMessageHeader::CMessageHeader()
 {
-    memcpy(pchMessageStart, Params().MessageStart(), MESSAGE_START_SIZE);
+    memcpy(pchMessageStart, GetCurrentMessageStart(), MESSAGE_START_SIZE);
     memset(pchCommand, 0, sizeof(pchCommand));
     nMessageSize = -1;
     nChecksum = 0;
@@ -43,7 +52,7 @@ CMessageHeader::CMessageHeader()
 
 CMessageHeader::CMessageHeader(const char* pszCommand, unsigned int nMessageSizeIn)
 {
-    memcpy(pchMessageStart, Params().MessageStart(), MESSAGE_START_SIZE);
+    memcpy(pchMessageStart, GetCurrentMessageStart(), MESSAGE_START_SIZE);
     memset(pchCommand, 0, sizeof(pchCommand));
     strncpy(pchCommand, pszCommand, COMMAND_SIZE);
     nMessageSize = nMessageSizeIn;
@@ -58,7 +67,7 @@ std::string CMessageHeader::GetCommand() const
 bool CMessageHeader::IsValid() const
 {
     // Check start string
-    if (memcmp(pchMessageStart, Params().MessageStart(), MESSAGE_START_SIZE) != 0)
+    if (memcmp(pchMessageStart, GetCurrentMessageStart(), MESSAGE_START_SIZE) != 0)
         return false;
 
     // Check the command string for errors
