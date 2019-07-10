@@ -41,14 +41,14 @@ double GetObfuscationValueForTier(int nTier)
     }
 }
 
-int CalculateWinningTier(std::vector<int>& vecTierSizes, uint256 blockHash)
+unsigned int CalculateWinningTier(std::vector<int>& vecTierSizes, uint256 blockHash)
 {
-    const int distribution[MasternodeTiers::TIER_NONE] = {1, 3, 10, 30, 100};
+    const unsigned int distribution[MasternodeTiers::TIER_NONE] = {1, 3, 10, 30, 100};
     double nDenominator = 0; // Summ( distribution[i]*count[i] )
-    int nMod = 0; // modulus = Summ( distribution[i] )
+    unsigned int nMod = 0; // modulus = Summ( distribution[i] )
 
     //Contains pairs <tier number, weighted value>
-    std::vector<std::pair<size_t, size_t>> weightedDistribution;
+    std::vector<std::pair<size_t, unsigned int>> weightedDistribution;
 
     //Select tiers which contain nodes
     for (auto i = 0; i < MasternodeTiers::TIER_NONE; i++) {
@@ -67,12 +67,12 @@ int CalculateWinningTier(std::vector<int>& vecTierSizes, uint256 blockHash)
         return weightedDistribution[0].first;
     }
 
-    int nPreviousWeight = 0;
+    unsigned int nPreviousWeight = 0;
     for (auto j = 0; j < weightedDistribution.size() - 1; j++) {
         auto curTier = weightedDistribution[j].first;
 
         //Calculate weighted distribution: WD = modulus * (distribution*count) / ( Summ(distribution[i]*count[i]) )
-        int weightedValue = round(vecTierSizes[curTier] * distribution[curTier] * nMod * 1.0 / nDenominator);
+        unsigned int weightedValue = round(vecTierSizes[curTier] * distribution[curTier] * nMod * 1.0 / nDenominator);
         if (weightedValue == 0) {
             weightedValue = 1;
         }

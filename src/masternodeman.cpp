@@ -522,7 +522,7 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         vecSizes.push_back(vecMasternodeTiers[i].size());
     }
 
-    int nTier = CalculateWinningTier(vecSizes, blockHash);
+    auto nTier = CalculateWinningTier(vecSizes, blockHash);
     return GetWinningNode(vecMasternodeTiers[nTier], blockHash);
 }
 
