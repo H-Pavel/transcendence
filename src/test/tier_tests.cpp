@@ -21,8 +21,6 @@ BOOST_AUTO_TEST_CASE(test_tier_from_outputs)
     int nInput = 0;
     unsigned int tiers[MasternodeTiers::TIER_NONE] = {MasternodeTiers::TIER_1K, MasternodeTiers::TIER_3K, MasternodeTiers::TIER_10K, MasternodeTiers::TIER_30K, MasternodeTiers::TIER_100K}
 
-    LOCK(wallet.cs_wallet);
-
     for (auto i = 0; i < MasternodeTiers::TIER_NONE; i++) {
         CMutableTransaction tx;
         tx.nLockTime = nextLockTime++;
@@ -31,10 +29,10 @@ BOOST_AUTO_TEST_CASE(test_tier_from_outputs)
 
         CWalletTx wtx(&wallet, tx);
 
-        BOOST_CHECK(IsMasternodeOutput(&tx, nInput));
-        BOOST_CHECK(!IsMasternodeOutput(&tx, tx.vout.size() + 2));
-        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&tx, nInput), tiers[i]);
-        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&tx, nInput + 2), MasternodeTiers::TIER_NONE);
+        BOOST_CHECK(IsMasternodeOutput(&wtx, nInput));
+        BOOST_CHECK(!IsMasternodeOutput(&wtx,nInput + 2));
+        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtx, nInput), tiers[i]);
+        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtx, nInput + 2), MasternodeTiers::TIER_NONE);
     }
     CMutableTransaction txNotMn;
     txNotMn.nLockTime = nextLockTime++;
@@ -43,9 +41,9 @@ BOOST_AUTO_TEST_CASE(test_tier_from_outputs)
 
     CWalletTx wtxNotMn(&wallet, txNotMn);
 
-    BOOST_CHECK(IsMasternodeOutput(&txNotMn, nInput));
-    BOOST_CHECK(!IsMasternodeOutput(&txNotMn, txNotMn.vout.size() + 2));
-    BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&txNotMn, nInput), MasternodeTiers::TIER_NONE);
+    BOOST_CHECK(IsMasternodeOutput(&wtxNotMn, nInput));
+    BOOST_CHECK(!IsMasternodeOutput(&wtxNotMn, nInput + 2));
+    BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtxNotMn, nInput), MasternodeTiers::TIER_NONE);
 }
 
 BOOST_AUTO_TEST_CASE(test_obfuscation_value)
