@@ -81,7 +81,6 @@ BOOST_AUTO_TEST_CASE(test_single_tier)
     std::vector<int> vecBlockNumbers = {0, 1, 3, 4, 13, 14, 43, 44, 143, 144};
     unsigned int tiers[MasternodeTiers::TIER_NONE] = {MasternodeTiers::TIER_1K, MasternodeTiers::TIER_3K, MasternodeTiers::TIER_10K, MasternodeTiers::TIER_30K, MasternodeTiers::TIER_100K};
 
-    vecTierSizes[0] = 1;
     for (auto tier = 0; tier < MasternodeTiers::TIER_NONE; tier++) {
         std::vector<size_t> vecTierSizes = {0, 0, 0, 0, 0};
         vecTierSizes[tier] = 10;
@@ -120,7 +119,7 @@ BOOST_AUTO_TEST_CASE(test_winning_tier)
 
     std::vector<size_t> vecTierSizes3 = {100, 40, 0, 5, 1};
     std::vector<int> vecBlockNumbers3 = {0, 28, 29, 62, 63, 105, 106, 133, 134};
-    std::vector<unsigned int> vecTier3 = {MasternodeTiers::TIER_1K, MasternodeTiers::TIER_1K, MasternodeTiers::TIER_3K,
+    std::vector<unsigned int> vecTiers3 = {MasternodeTiers::TIER_1K, MasternodeTiers::TIER_1K, MasternodeTiers::TIER_3K,
                                            MasternodeTiers::TIER_3K, MasternodeTiers::TIER_30K, MasternodeTiers::TIER_30K,
                                            MasternodeTiers::TIER_100K, MasternodeTiers::TIER_100K, MasternodeTiers::TIER_1K};
     for (auto j = 0; j < vecBlockNumbers3.size(); j++) {
