@@ -553,6 +553,7 @@ SOURCES += src/activemasternode.cpp \
            src/test/sigopcount_tests.cpp \
            src/test/skiplist_tests.cpp \
            src/test/test_transcendence.cpp \
+           src/test/tier_tests.cpp \
            src/test/timedata_tests.cpp \
            src/test/transaction_tests.cpp \
            src/test/uint256_tests.cpp \

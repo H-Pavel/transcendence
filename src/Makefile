@@ -866,7 +866,7 @@ am__test_test_transcendence_SOURCES_DIST =  \
 	test/script_tests.cpp test/scriptnum_tests.cpp \
 	test/serialize_tests.cpp test/sighash_tests.cpp \
 	test/sigopcount_tests.cpp test/skiplist_tests.cpp \
-	test/test_transcendence.cpp test/timedata_tests.cpp \
+	test/test_transcendence.cpp test/tier_tests.cpp test/timedata_tests.cpp \
 	test/torcontrol_tests.cpp test/transaction_tests.cpp \
 	test/uint256_tests.cpp test/univalue_tests.cpp \
 	test/util_tests.cpp test/accounting_tests.cpp \
@@ -916,6 +916,7 @@ am__objects_18 = test/test_transcendence-zerocoin_implementation_tests.$(OBJEXT)
 	test/test_transcendence-sigopcount_tests.$(OBJEXT) \
 	test/test_transcendence-skiplist_tests.$(OBJEXT) \
 	test/test_transcendence-test_transcendence.$(OBJEXT) \
+	test/test_transcendence-tier_tests.$(OBJEXT) \
 	test/test_transcendence-timedata_tests.$(OBJEXT) \
 	test/test_transcendence-torcontrol_tests.$(OBJEXT) \
 	test/test_transcendence-transaction_tests.$(OBJEXT) \
@@ -1317,6 +1318,7 @@ am__depfiles_remade = ./$(DEPDIR)/libbitcoin_cli_a-rpcclient.Po \
 	test/$(DEPDIR)/test_transcendence-sigopcount_tests.Po \
 	test/$(DEPDIR)/test_transcendence-skiplist_tests.Po \
 	test/$(DEPDIR)/test_transcendence-test_transcendence.Po \
+	test/$(DEPDIR)/test_transcendence-tier_tests.Po \
 	test/$(DEPDIR)/test_transcendence-timedata_tests.Po \
 	test/$(DEPDIR)/test_transcendence-torcontrol_tests.Po \
 	test/$(DEPDIR)/test_transcendence-transaction_tests.Po \
@@ -2382,6 +2384,7 @@ BITCOIN_TESTS =  \
 	test/sigopcount_tests.cpp \
 	test/skiplist_tests.cpp \
 	test/test_transcendence.cpp \
+	test/tier_tests.cpp \
 	test/timedata_tests.cpp \
 	test/torcontrol_tests.cpp \
 	test/transaction_tests.cpp \
@@ -3451,6 +3454,8 @@ test/test_transcendence-skiplist_tests.$(OBJEXT):  \
 	test/$(am__dirstamp) test/$(DEPDIR)/$(am__dirstamp)
 test/test_transcendence-test_transcendence.$(OBJEXT):  \
 	test/$(am__dirstamp) test/$(DEPDIR)/$(am__dirstamp)
+test/test_transcendence-tier_tests.$(OBJEXT):  \
+	test/$(am__dirstamp) test/$(DEPDIR)/$(am__dirstamp)
 test/test_transcendence-timedata_tests.$(OBJEXT):  \
 	test/$(am__dirstamp) test/$(DEPDIR)/$(am__dirstamp)
 test/test_transcendence-torcontrol_tests.$(OBJEXT):  \
@@ -3813,6 +3818,7 @@ include test/$(DEPDIR)/test_transcendence-sighash_tests.Po # am--include-marker
 include test/$(DEPDIR)/test_transcendence-sigopcount_tests.Po # am--include-marker
 include test/$(DEPDIR)/test_transcendence-skiplist_tests.Po # am--include-marker
 include test/$(DEPDIR)/test_transcendence-test_transcendence.Po # am--include-marker
+include test/$(DEPDIR)/test_transcendence-tier_tests.Po # am--include-marker
 include test/$(DEPDIR)/test_transcendence-timedata_tests.Po # am--include-marker
 include test/$(DEPDIR)/test_transcendence-torcontrol_tests.Po # am--include-marker
 include test/$(DEPDIR)/test_transcendence-transaction_tests.Po # am--include-marker
@@ -7910,6 +7916,20 @@ test/test_transcendence-test_transcendence.obj: test/test_transcendence.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_test_transcendence_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test/test_transcendence-test_transcendence.obj `if test -f 'test/test_transcendence.cpp'; then $(CYGPATH_W) 'test/test_transcendence.cpp'; else $(CYGPATH_W) '$(srcdir)/test/test_transcendence.cpp'; fi`
 
+test/test_transcendence-tier_tests.o: test/tier_tests.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_test_transcendence_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test/test_transcendence-tier_tests.o -MD -MP -MF test/$(DEPDIR)/test_transcendence-tier_tests.Tpo -c -o test/test_transcendence-tier_tests.o `test -f 'test/tier_tests.cpp' || echo '$(srcdir)/'`test/tier_tests.cpp
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_transcendence-tier_tests.Tpo test/$(DEPDIR)/test_transcendence-tier_tests.Po
+#	$(AM_V_CXX)source='test/tier_tests.cpp' object='test/test_transcendence-tier_tests.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_test_transcendence_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test/test_transcendence-tier_tests.o `test -f 'test/tier_tests.cpp' || echo '$(srcdir)/'`test/tier_tests.cpp
+
+test/test_transcendence-tier_tests.obj: test/tier_tests.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_test_transcendence_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test/test_transcendence-tier_tests.obj -MD -MP -MF test/$(DEPDIR)/test_transcendence-tier_tests.Tpo -c -o test/test_transcendence-tier_tests.obj `if test -f 'test/tier_tests.cpp'; then $(CYGPATH_W) 'test/tier_tests.cpp'; else $(CYGPATH_W) '$(srcdir)/test/tier_tests.cpp'; fi`
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_transcendence-tier_tests.Tpo test/$(DEPDIR)/test_transcendence-tier_tests.Po
+#	$(AM_V_CXX)source='test/tier_tests.cpp' object='test/test_transcendence-tier_tests.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_test_transcendence_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test/test_transcendence-tier_tests.obj `if test -f 'test/tier_tests.cpp'; then $(CYGPATH_W) 'test/tier_tests.cpp'; else $(CYGPATH_W) '$(srcdir)/test/tier_tests.cpp'; fi`
+
 test/test_transcendence-timedata_tests.o: test/timedata_tests.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_test_transcendence_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test/test_transcendence-timedata_tests.o -MD -MP -MF test/$(DEPDIR)/test_transcendence-timedata_tests.Tpo -c -o test/test_transcendence-timedata_tests.o `test -f 'test/timedata_tests.cpp' || echo '$(srcdir)/'`test/timedata_tests.cpp
 	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_transcendence-timedata_tests.Tpo test/$(DEPDIR)/test_transcendence-timedata_tests.Po
@@ -8895,6 +8915,7 @@ distclean: distclean-recursive
 	-rm -f test/$(DEPDIR)/test_transcendence-sigopcount_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-skiplist_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-test_transcendence.Po
+	-rm -f test/$(DEPDIR)/test_transcendence-tier_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-timedata_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-torcontrol_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-transaction_tests.Po
@@ -9263,6 +9284,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f test/$(DEPDIR)/test_transcendence-sigopcount_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-skiplist_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-test_transcendence.Po
+	-rm -f test/$(DEPDIR)/test_transcendence-tier_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-timedata_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-torcontrol_tests.Po
 	-rm -f test/$(DEPDIR)/test_transcendence-transaction_tests.Po
