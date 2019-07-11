@@ -7,23 +7,18 @@
 
 bool IsMasternodeOutput(const CWalletTx* tx, int index)
 {
-    bool bFound = false;
-
-    for (int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
-        if (tx->vout[index].nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
-            bFound = true;
-            break;
-        }
-    }
-    return bFound;
+    return (GetMasternodeTierFromOutput(tx, index) != MasternodeTiers::TIER_NONE);
 }
 
-int GetMasternodeTierFromOutput(COutput& out)
+int GetMasternodeTierFromOutput(const CWalletTx* tx, int index)
 {
     int tierRet = MasternodeTiers::TIER_NONE;
 
+    if (index < 0 || index >= tx->vout.size())
+        return MasternodeTiers::TIER_NONE;
+
     for (int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
-        if (out.tx->vout[out.i].nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
+        if (tx->vout[index].nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
             tierRet = tier;
             break;
         }
@@ -79,7 +74,7 @@ unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blo
         //Convert weighted distribution to the percent of the modulus
         weightedDistribution[j].second = nPreviousWeight;
         weightedDistribution[j].second += weightedValue;
-        nPreviousWeight = weightedValue;
+        nPreviousWeight = weightedDistribution[j].second;
     }
     weightedDistribution[weightedDistribution.size() - 1].second = nMod;
     //Now distribution is converted from values [1,3,10,30,100] to the weighted percents, e.g. [1, 4, 14, 44, 144] for modulus = 144

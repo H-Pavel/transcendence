@@ -504,7 +504,7 @@ bool CWallet::GetVinAndKeysFromOutput(COutput out, CTxIn& txinRet, int& tierRet,
     CScript pubScript;
 
     txinRet = CTxIn(out.tx->GetHash(), out.i);
-    tierRet = GetMasternodeTierFromOutput(out);
+    tierRet = GetMasternodeTierFromOutput(out.tx, out.i);
     pubScript = out.tx->vout[out.i].scriptPubKey; // the inputs PubKey
 
     CTxDestination address1;

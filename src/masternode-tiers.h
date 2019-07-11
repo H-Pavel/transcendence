@@ -14,7 +14,7 @@ const double TIER_OBFUSCATION_VALUES[MasternodeTiers::TIER_NONE] = {999.99, 2999
 
 
 bool IsMasternodeOutput(const CWalletTx* tx, int index);
-int GetMasternodeTierFromOutput(COutput& out);
+int GetMasternodeTierFromOutput(const CWalletTx* tx, int index);
 double GetObfuscationValueForTier(int nTier);
 unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blockHash);
 

@@ -418,7 +418,7 @@ bool CActiveMasternode::GetVinFromOutput(COutput out, CTxIn& vin, int& nTier, CP
     CScript pubScript;
 
     vin = CTxIn(out.tx->GetHash(), out.i);
-    nTier = GetMasternodeTierFromOutput(out);
+    nTier = GetMasternodeTierFromOutput(out.tx, out.i);
     pubScript = out.tx->vout[out.i].scriptPubKey; // the inputs PubKey
 
     CTxDestination address1;
