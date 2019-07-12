@@ -13,13 +13,12 @@
 #include "primitives/block.h"
 #include "protocol.h"
 #include "uint256.h"
-#include "masternode-tiers.h"
 
 #include "libzerocoin/Params.h"
 #include <vector>
 
 typedef unsigned char MessageStartChars[MESSAGE_START_SIZE];
-const int MAGIC_UPDATE_BLOCK_HEIGHT = TIER_BLOCK_HEIGHT;
+const int MAGIC_UPDATE_BLOCK_HEIGHT = 100;
 
 struct CDNSSeedData {
     std::string name, host;
@@ -50,6 +49,14 @@ public:
     const uint256& HashGenesisBlock() const { return hashGenesisBlock; }
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
     const MessageStartChars& MessageStartNew() const { return pchMessageStartTranscendence; }
+    const MessageStartChars& GetCurrentMessageStart(int blockHeight) const
+    {
+        if (blockHeight > MAGIC_UPDATE_BLOCK_HEIGHT)
+        {
+            return MessageStartNew();
+        }
+        return MessageStart();
+    }
     const std::vector<unsigned char>& AlertKey() const { return vAlertPubKey; }
     int GetDefaultPort() const { return nDefaultPort; }
     const uint256& ProofOfWorkLimit() const { return bnProofOfWorkLimit; }

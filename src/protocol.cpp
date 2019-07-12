@@ -8,6 +8,7 @@
 #include "chainparams.h"
 #include "util.h"
 #include "utilstrencodings.h"
+#include "main.h"
 
 #ifndef WIN32
 #include <arpa/inet.h>
@@ -33,18 +34,9 @@ static const char* ppszTypeName[] =
         "mn ping",
         "dstx"};
 
-const MessageStartChars& GetCurrentMessageStart()
-{
-    if (chainActive.Height() > MAGIC_UPDATE_BLOCK_HEIGHT)
-    {
-        return Params().MessageStartNew();
-    }
-    return Params().MessageStart();
-}
-
 CMessageHeader::CMessageHeader()
 {
-    memcpy(pchMessageStart, GetCurrentMessageStart(), MESSAGE_START_SIZE);
+    memcpy(pchMessageStart, Params().GetCurrentMessageStart(chainActive.Height()), MESSAGE_START_SIZE);
     memset(pchCommand, 0, sizeof(pchCommand));
     nMessageSize = -1;
     nChecksum = 0;
@@ -52,7 +44,7 @@ CMessageHeader::CMessageHeader()
 
 CMessageHeader::CMessageHeader(const char* pszCommand, unsigned int nMessageSizeIn)
 {
-    memcpy(pchMessageStart, GetCurrentMessageStart(), MESSAGE_START_SIZE);
+    memcpy(pchMessageStart, Params().GetCurrentMessageStart(chainActive.Height()), MESSAGE_START_SIZE);
     memset(pchCommand, 0, sizeof(pchCommand));
     strncpy(pchCommand, pszCommand, COMMAND_SIZE);
     nMessageSize = nMessageSizeIn;
@@ -67,7 +59,7 @@ std::string CMessageHeader::GetCommand() const
 bool CMessageHeader::IsValid() const
 {
     // Check start string
-    if (memcmp(pchMessageStart, GetCurrentMessageStart(), MESSAGE_START_SIZE) != 0)
+    if (memcmp(pchMessageStart, Params().GetCurrentMessageStart(chainActive.Height()), MESSAGE_START_SIZE) != 0)
         return false;
 
     // Check the command string for errors

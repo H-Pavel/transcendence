@@ -444,15 +444,6 @@ CNode* ConnectNode(CAddress addrConnect, const char* pszDest, bool obfuScationMa
     return NULL;
 }
 
-const MessageStartChars& GetCurrentMessageStart()
-{
-    if (chainActive.Height() > MAGIC_UPDATE_BLOCK_HEIGHT)
-    {
-        return Params().MessageStartNew();
-    }
-    return Params().MessageStart();
-}
-
 void CNode::CloseSocketDisconnect()
 {
     fDisconnect = true;
@@ -1835,7 +1826,7 @@ bool CAddrDB::Write(const CAddrMan& addr)
 
     // serialize addresses, checksum data up to that point, then append csum
     CDataStream ssPeers(SER_DISK, CLIENT_VERSION);
-    ssPeers << FLATDATA(GetCurrentMessageStart());
+    ssPeers << FLATDATA(Params().GetCurrentMessageStart(chainActive.Height()));
     ssPeers << addr;
     uint256 hash = Hash(ssPeers.begin(), ssPeers.end());
     ssPeers << hash;
@@ -1899,7 +1890,7 @@ bool CAddrDB::Read(CAddrMan& addr)
         ssPeers >> FLATDATA(pchMsgTmp);
 
         // ... verify the network matches ours
-        if (memcmp(pchMsgTmp, GetCurrentMessageStart(), sizeof(pchMsgTmp)))
+        if (memcmp(pchMsgTmp, Params().GetCurrentMessageStart(chainActive.Height()), sizeof(pchMsgTmp)))
             return error("%s : Invalid network magic number", __func__);
 
         // de-serialize address data into one CAddrMan object

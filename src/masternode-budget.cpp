@@ -96,15 +96,6 @@ bool IsBudgetCollateralValid(uint256 nTxCollateralHash, uint256 nExpectedHash, s
     }
 }
 
-const MessageStartChars& GetCurrentMessageStart()
-{
-    if (chainActive.Height() > MAGIC_UPDATE_BLOCK_HEIGHT)
-    {
-        return Params().MessageStartNew();
-    }
-    return Params().MessageStart();
-}
-
 void CBudgetManager::CheckOrphanVotes()
 {
     LOCK(cs);
@@ -270,7 +261,7 @@ bool CBudgetDB::Write(const CBudgetManager& objToSave)
     // serialize, checksum data up to that point, then append checksum
     CDataStream ssObj(SER_DISK, CLIENT_VERSION);
     ssObj << strMagicMessage;                   // masternode cache file specific magic message
-    ssObj << FLATDATA(GetCurrentMessageStart()); // network specific magic number
+    ssObj << FLATDATA(Params().GetCurrentMessageStart(chainActive.Height())); // network specific magic number
     ssObj << objToSave;
     uint256 hash = Hash(ssObj.begin(), ssObj.end());
     ssObj << hash;
@@ -354,7 +345,7 @@ CBudgetDB::ReadResult CBudgetDB::Read(CBudgetManager& objToLoad, bool fDryRun)
         ssObj >> FLATDATA(pchMsgTmp);
 
         // ... verify the network matches ours
-        if (memcmp(pchMsgTmp, GetCurrentMessageStart(), sizeof(pchMsgTmp))) {
+        if (memcmp(pchMsgTmp, Params().GetCurrentMessageStart(chainActive.Height()), sizeof(pchMsgTmp))) {
             error("%s : Invalid network magic number", __func__);
             return IncorrectMagicNumber;
         }

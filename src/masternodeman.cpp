@@ -44,15 +44,6 @@ struct CompareScoreMN {
     }
 };
 
-const MessageStartChars& GetCurrentMessageStart()
-{
-    if (chainActive.Height() > MAGIC_UPDATE_BLOCK_HEIGHT)
-    {
-        return Params().MessageStartNew();
-    }
-    return Params().MessageStart();
-}
-
 //
 // CMasternodeDB
 //
@@ -70,7 +61,7 @@ bool CMasternodeDB::Write(const CMasternodeMan& mnodemanToSave)
     // serialize, checksum data up to that point, then append checksum
     CDataStream ssMasternodes(SER_DISK, CLIENT_VERSION);
     ssMasternodes << strMagicMessage;                   // masternode cache file specific magic message
-    ssMasternodes << FLATDATA(GetCurrentMessageStart()); // network specific magic number
+    ssMasternodes << FLATDATA(Params().GetCurrentMessageStart(chainActive.Height())); // network specific magic number
     ssMasternodes << mnodemanToSave;
     uint256 hash = Hash(ssMasternodes.begin(), ssMasternodes.end());
     ssMasternodes << hash;
@@ -153,7 +144,7 @@ CMasternodeDB::ReadResult CMasternodeDB::Read(CMasternodeMan& mnodemanToLoad, bo
         ssMasternodes >> FLATDATA(pchMsgTmp);
 
         // ... verify the network matches ours
-        if (memcmp(pchMsgTmp, GetCurrentMessageStart(), sizeof(pchMsgTmp))) {
+        if (memcmp(pchMsgTmp, Params().GetCurrentMessageStart(chainActive.Height()), sizeof(pchMsgTmp))) {
             error("%s : Invalid network magic number", __func__);
             return IncorrectMagicNumber;
         }
