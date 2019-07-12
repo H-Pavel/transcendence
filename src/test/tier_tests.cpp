@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(test_tier_from_outputs)
         BOOST_CHECK(IsMasternodeOutput(&wtx, nInput, TIER_BLOCK_HEIGHT));
         BOOST_CHECK(!IsMasternodeOutput(&wtx, nInput + 2, TIER_BLOCK_HEIGHT));
         BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtx, nInput, TIER_BLOCK_HEIGHT), tiers[i]);
-        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtx, nInput + 2, TIER_BLOCK_HEIGHT),, MasternodeTiers::TIER_NONE);
+        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtx, nInput + 2, TIER_BLOCK_HEIGHT), MasternodeTiers::TIER_NONE);
     }
     CMutableTransaction txNotMn;
     txNotMn.nLockTime = nextLockTime++;
