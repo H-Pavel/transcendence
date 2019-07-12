@@ -19,7 +19,7 @@
 #include "primitives/transaction.h"
 #include "ui_interface.h"
 #include "wallet.h"
-#include "spork.h"
+#include "main.h"
 
 #ifdef WIN32
 #include <string.h>
@@ -446,7 +446,7 @@ CNode* ConnectNode(CAddress addrConnect, const char* pszDest, bool obfuScationMa
 
 const MessageStartChars& GetCurrentMessageStart()
 {
-    if (IsSporkActive(SPORK_17_MAGIC_HEADER_UPDATE))
+    if (chainActive.Height() > MAGIC_UPDATE_BLOCK_HEIGHT)
     {
         return Params().MessageStartNew();
     }

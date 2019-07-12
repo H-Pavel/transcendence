@@ -195,7 +195,7 @@ set<int> setDirtyFileInfo;
 
 const MessageStartChars& GetCurrentMessageStart()
 {
-    if (IsSporkActive(SPORK_17_MAGIC_HEADER_UPDATE))
+    if (chainActive.Height() > MAGIC_UPDATE_BLOCK_HEIGHT)
     {
         return Params().MessageStartNew();
     }

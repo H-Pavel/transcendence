@@ -13,11 +13,13 @@
 #include "primitives/block.h"
 #include "protocol.h"
 #include "uint256.h"
+#include "masternode-tiers.h"
 
 #include "libzerocoin/Params.h"
 #include <vector>
 
 typedef unsigned char MessageStartChars[MESSAGE_START_SIZE];
+const int MAGIC_UPDATE_BLOCK_HEIGHT = TIER_BLOCK_HEIGHT;
 
 struct CDNSSeedData {
     std::string name, host;

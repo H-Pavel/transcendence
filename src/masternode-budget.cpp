@@ -98,7 +98,7 @@ bool IsBudgetCollateralValid(uint256 nTxCollateralHash, uint256 nExpectedHash, s
 
 const MessageStartChars& GetCurrentMessageStart()
 {
-    if (IsSporkActive(SPORK_17_MAGIC_HEADER_UPDATE))
+    if (chainActive.Height() > MAGIC_UPDATE_BLOCK_HEIGHT)
     {
         return Params().MessageStartNew();
     }
