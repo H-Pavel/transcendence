@@ -5,22 +5,29 @@
 #include "masternode-tiers.h"
 #include "amount.h"
 
-bool IsMasternodeOutput(const CWalletTx* tx, int index)
+bool IsMasternodeOutput(const CWalletTx* tx, int index, int blockHeight)
 {
-    return (GetMasternodeTierFromOutput(tx, index) != MasternodeTiers::TIER_NONE);
+    return (GetMasternodeTierFromOutput(tx, index, blockHeight) != MasternodeTiers::TIER_NONE);
 }
 
-int GetMasternodeTierFromOutput(const CWalletTx* tx, int index)
+int GetMasternodeTierFromOutput(const CWalletTx* tx, int index, int blockHeight)
 {
     int tierRet = MasternodeTiers::TIER_NONE;
 
     if (index < 0 || index >= tx->vout.size())
         return MasternodeTiers::TIER_NONE;
 
-    for (int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
-        if (tx->vout[index].nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
-            tierRet = tier;
-            break;
+    if (blockHeight < TIER_BLOCK_HEIGHT) {
+        if (tx->vout[index].nValue == MASTERNODE_TIER_COINS[MasternodeTiers::TIER_1K] * COIN) {
+            tierRet = MasternodeTiers::TIER_1K;
+        }
+    }
+    else {
+        for (int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
+            if (tx->vout[index].nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
+                tierRet = tier;
+                break;
+            }
         }
     }
     return tierRet;

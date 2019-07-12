@@ -480,6 +480,8 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
 {
     LOCK(cs);
 
+    CMasternode* pBestMasternode = NULL;
+    std::vector<pair<int64_t, CTxIn>> vecMasternodeLastPaid;
     std::vector<pair<int64_t, CTxIn>> vecMasternodeTiers[MasternodeTiers::TIER_NONE];
 
     /*
@@ -504,7 +506,12 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         //make sure it has as many confirmations as there are masternodes
         if (mn.GetMasternodeInputAge() < nMnCount) continue;
 
-        vecMasternodeTiers[mn.tier].push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
+        if (nBlockHeight < TIER_BLOCK_HEIGHT) {
+            vecMasternodeLastPaid.push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
+        }
+        else {
+            vecMasternodeTiers[mn.tier].push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
+        }
         nCount++;
     }
 
@@ -516,14 +523,21 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         LogPrint("masternodeman", "GetNextMasternodeInQueueForPayment ERROR - nHeight %d - Returned 0\n", nBlockHeight - 100);
         return NULL;
     }
-
-    std::vector<size_t> vecSizes;
-    for (auto i = 0; i < MasternodeTiers::TIER_NONE; i++) {
-        vecSizes.push_back(vecMasternodeTiers[i].size());
+    if (nBlockHeight < TIER_BLOCK_HEIGHT) {
+    //Single tier - 1K
+        pBestMasternode = GetWinningNode(vecMasternodeLastPaid, blockHash);
     }
+    else {
+    //Apply tier distribution algorithm
+        std::vector<size_t> vecSizes;
+        for (auto i = 0; i < MasternodeTiers::TIER_NONE; i++) {
+            vecSizes.push_back(vecMasternodeTiers[i].size());
+        }
 
-    auto nTier = CalculateWinningTier(vecSizes, blockHash);
-    return GetWinningNode(vecMasternodeTiers[nTier], blockHash);
+        auto nTier = CalculateWinningTier(vecSizes, blockHash);
+        pBestMasternode = GetWinningNode(vecMasternodeTiers[nTier], blockHash);
+    }
+    return pBestMasternode;
 }
 
 CMasternode* CMasternodeMan::GetWinningNode(std::vector<pair<int64_t, CTxIn>>& vecMasternodeLastPaid, uint256 blockHash)

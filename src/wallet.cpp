@@ -504,7 +504,7 @@ bool CWallet::GetVinAndKeysFromOutput(COutput out, CTxIn& txinRet, int& tierRet,
     CScript pubScript;
 
     txinRet = CTxIn(out.tx->GetHash(), out.i);
-    tierRet = GetMasternodeTierFromOutput(out.tx, out.i);
+    tierRet = GetMasternodeTierFromOutput(out.tx, out.i, chainActive.Height());
     pubScript = out.tx->vout[out.i].scriptPubKey; // the inputs PubKey
 
     CTxDestination address1;
@@ -1599,6 +1599,7 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
     vCoins.clear();
 
     {
+        auto currentBlock = chainActive.Height();
         LOCK2(cs_main, cs_wallet);
         for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it) {
             const uint256& wtxid = it->first;
@@ -1628,13 +1629,13 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
                 if (nCoinType == ONLY_DENOMINATED) {
                     found = IsDenominatedAmount(pcoin->vout[i].nValue);
                 } else if (nCoinType == ONLY_NOT10000IFMN) {
-                    found = !(fMasterNode && IsMasternodeOutput(pcoin, i));
+                    found = !(fMasterNode && IsMasternodeOutput(pcoin, i, currentBlock));
                 } else if (nCoinType == ONLY_NONDENOMINATED_NOT10000IFMN) {
                     if (IsCollateralAmount(pcoin->vout[i].nValue)) continue; // do not use collateral amounts
                     found = !IsDenominatedAmount(pcoin->vout[i].nValue);
-                    if (found && fMasterNode) found = !IsMasternodeOutput(pcoin, i); // do not use Hot MN funds
+                    if (found && fMasterNode) found = !IsMasternodeOutput(pcoin, i, currentBlock); // do not use Hot MN funds
                 } else if (nCoinType == ONLY_10000) {
-                    found = IsMasternodeOutput(pcoin, i);
+                    found = IsMasternodeOutput(pcoin, i, currentBlock);
                 } else {
                     found = true;
                 }

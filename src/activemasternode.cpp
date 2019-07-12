@@ -418,7 +418,7 @@ bool CActiveMasternode::GetVinFromOutput(COutput out, CTxIn& vin, int& nTier, CP
     CScript pubScript;
 
     vin = CTxIn(out.tx->GetHash(), out.i);
-    nTier = GetMasternodeTierFromOutput(out.tx, out.i);
+    nTier = GetMasternodeTierFromOutput(out.tx, out.i, chainActive.Height());
     pubScript = out.tx->vout[out.i].scriptPubKey; // the inputs PubKey
 
     CTxDestination address1;
@@ -472,9 +472,10 @@ vector<COutput> CActiveMasternode::SelectCoinsMasternode()
             pwalletMain->LockCoin(outpoint);
     }
 
+    auto currentBlock = chainActive.Height();
     // Filter
     BOOST_FOREACH (const COutput& out, vCoins) {
-        if (IsMasternodeOutput(out.tx, out.i)) {
+        if (IsMasternodeOutput(out.tx, out.i, currentBlock)) {
             filteredCoins.push_back(out);
         }
     }
