@@ -18,6 +18,7 @@
 #include <vector>
 
 typedef unsigned char MessageStartChars[MESSAGE_START_SIZE];
+const int MAGIC_UPDATE_BLOCK_HEIGHT = 517314;
 
 struct CDNSSeedData {
     std::string name, host;
@@ -47,6 +48,15 @@ public:
 
     const uint256& HashGenesisBlock() const { return hashGenesisBlock; }
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
+    const MessageStartChars& MessageStartNew() const { return pchMessageStartTranscendence; }
+    const MessageStartChars& GetCurrentMessageStart(int blockHeight) const
+    {
+        if (blockHeight > MAGIC_UPDATE_BLOCK_HEIGHT)
+        {
+            return MessageStartNew();
+        }
+        return MessageStart();
+    }
     const std::vector<unsigned char>& AlertKey() const { return vAlertPubKey; }
     int GetDefaultPort() const { return nDefaultPort; }
     const uint256& ProofOfWorkLimit() const { return bnProofOfWorkLimit; }
@@ -124,6 +134,7 @@ protected:
 
     uint256 hashGenesisBlock;
     MessageStartChars pchMessageStart;
+    MessageStartChars pchMessageStartTranscendence;
     //! Raw pub key bytes for the broadcast alert signing key.
     std::vector<unsigned char> vAlertPubKey;
     int nDefaultPort;

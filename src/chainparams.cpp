@@ -104,6 +104,11 @@ public:
         pchMessageStart[1] = 0x75;
         pchMessageStart[2] = 0x4d;
         pchMessageStart[3] = 0x39;
+
+        pchMessageStartTranscendence[0] = 0x54;
+        pchMessageStartTranscendence[1] = 0x45;
+        pchMessageStartTranscendence[2] = 0x4C;
+        pchMessageStartTranscendence[3] = 0x53;
         vAlertPubKey = ParseHex("0317dc37cb1011c0a162fc113358cdad2a12b85a0f841c4c48346bd85f45ec5c1d");
         nDefaultPort = 22123;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // Transcendence starting difficulty is 1 / 2^12
@@ -234,6 +239,11 @@ public:
         pchMessageStart[1] = 0x76;
         pchMessageStart[2] = 0x65;
         pchMessageStart[3] = 0xba;
+
+        pchMessageStartTranscendence[0] = 0x54;
+        pchMessageStartTranscendence[1] = 0x45;
+        pchMessageStartTranscendence[2] = 0x65;
+        pchMessageStartTranscendence[3] = 0xba;
         vAlertPubKey = ParseHex("042292b1f401860eea99e1a8a103effbd7e1c013a59a1a3a0c91c9d1997a0bc6f338567278c11344802838c107055bf7c1641eaed61e879245c255a4f5be5746fc");
         nDefaultPort = 19333;
         nEnforceBlockUpgradeMajority = 51;
@@ -330,6 +340,11 @@ public:
         pchMessageStart[1] = 0xcf;
         pchMessageStart[2] = 0x7e;
         pchMessageStart[3] = 0xac;
+
+        pchMessageStartTranscendence[0] = 0x54;
+        pchMessageStartTranscendence[1] = 0x45;
+        pchMessageStartTranscendence[2] = 0x7e;
+        pchMessageStartTranscendence[3] = 0xac;
         nSubsidyHalvingInterval = 150;
         nEnforceBlockUpgradeMajority = 750;
         nRejectBlockOutdatedMajority = 950;
