@@ -482,7 +482,7 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
 
     CMasternode* pBestMasternode = NULL;
     std::vector<pair<int64_t, CTxIn>> vecMasternodeLastPaid;
-    std::vector<pair<int64_t, CTxIn>> vecMasternodeTiers[MasternodeTiers::TIER_NONE];
+    std::vector<pair<int64_t, CTxIn>> vecMasternodeTiers[MasternodeTiers::TIER_NONE] = {};
 
     /*
         Make a vector with all of the last paid times of masternodes for every tier
@@ -520,8 +520,7 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
 
     uint256 blockHash = 0;
     if (!GetBlockHash(blockHash, nBlockHeight - 100)) {
-        LogPrint("masternodeman", "GetNextMasternodeInQueueForPayment ERROR - nHeight %d - Returned 0\n", nBlockHeight - 100);
-        return NULL;
+        LogPrint("masternodeman", "GetNextMasternodeInQueueForPayment ERROR - nHeight %d\n", nBlockHeight - 100);
     }
     if (nBlockHeight < TIER_BLOCK_HEIGHT) {
     //Single tier - 1K
@@ -535,7 +534,9 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         }
 
         auto nTier = CalculateWinningTier(vecSizes, blockHash);
-        pBestMasternode = GetWinningNode(vecMasternodeTiers[nTier], blockHash);
+        if (nTier != MasternodeTiers::TIER_NONE) {
+            pBestMasternode = GetWinningNode(vecMasternodeTiers[nTier], blockHash);
+        }
     }
     return pBestMasternode;
 }
@@ -545,8 +546,9 @@ CMasternode* CMasternodeMan::GetWinningNode(std::vector<pair<int64_t, CTxIn>>& v
     CMasternode* pBestMasternode = NULL;
 
     // Sort vector of last paid times high to low
-    sort(vecMasternodeLastPaid.rbegin(), vecMasternodeLastPaid.rend(), CompareLastPaid());
-
+    if (vecMasternodeLastPaid.size() > 1) {
+        sort(vecMasternodeLastPaid.rbegin(), vecMasternodeLastPaid.rend(), CompareLastPaid());
+    }
     // Look at 1/10 of the oldest nodes (by last payment), calculate their scores and pay the best one
     //  -- This doesn't look at who is being paid in the +8-10 blocks, allowing for double payments very rarely
     //  -- 1/100 payments should be a double payment on mainnet - (1/(3000/10))*2

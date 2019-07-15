@@ -87,7 +87,7 @@ unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blo
     //Now distribution is converted from values [1,3,10,30,100] to the weighted percents, e.g. [1, 4, 14, 44, 144] for modulus = 144
 
     int nWinningTier = MasternodeTiers::TIER_NONE;
-    unsigned int nCheckNumber = (unsigned long long)(blockHash.getdouble()) % nMod;
+    unsigned int nCheckNumber = blockHash.Get64() % nMod;
     for (auto k = 0; k < weightedDistribution.size(); k++) {
         if (nCheckNumber < weightedDistribution[k].second) {
             nWinningTier = weightedDistribution[k].first;
