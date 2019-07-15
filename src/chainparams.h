@@ -18,7 +18,7 @@
 #include <vector>
 
 typedef unsigned char MessageStartChars[MESSAGE_START_SIZE];
-const int MAGIC_UPDATE_BLOCK_HEIGHT = 100;
+const int MAGIC_UPDATE_BLOCK_HEIGHT = 517314;
 
 struct CDNSSeedData {
     std::string name, host;
