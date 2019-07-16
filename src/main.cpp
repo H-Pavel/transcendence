@@ -2058,7 +2058,7 @@ bool WriteBlockToDisk(CBlock& block, CDiskBlockPos& pos)
 
     // Write index header
     unsigned int nSize = fileout.GetSerializeSize(block);
-    fileout << FLATDATA(Params().GetCurrentMessageStart(chainActive.Height())) << nSize;
+    fileout << FLATDATA(Params().MessageStart()) << nSize;
 
     // Write block
     long fileOutPos = ftell(fileout.Get());
@@ -4899,10 +4899,10 @@ bool LoadExternalBlockFile(FILE* fileIn, CDiskBlockPos* dbp)
             try {
                 // locate a header
                 unsigned char buf[MESSAGE_START_SIZE];
-                blkdat.FindByte(Params().GetCurrentMessageStart(chainActive.Height())[0]);
+                blkdat.FindByte(Params().MessageStart()[0]);
                 nRewind = blkdat.GetPos() + 1;
                 blkdat >> FLATDATA(buf);
-                if (memcmp(buf, Params().GetCurrentMessageStart(chainActive.Height()), MESSAGE_START_SIZE))
+                if (memcmp(buf, Params().MessageStart(), MESSAGE_START_SIZE))
                     continue;
                 // read size
                 blkdat >> nSize;
@@ -6369,7 +6369,7 @@ bool ProcessMessages(CNode* pfrom)
         it++;
 
         // Scan for message start
-        if (memcmp(msg.hdr.pchMessageStart, Params().GetCurrentMessageStart(chainActive.Height()), MESSAGE_START_SIZE) != 0) {
+        if (memcmp(msg.hdr.pchMessageStart, Params().MessageStart(), MESSAGE_START_SIZE) != 0) {
             LogPrintf("PROCESSMESSAGE: INVALID MESSAGESTART %s peer=%d\n", SanitizeString(msg.hdr.GetCommand()), pfrom->id);
             fOk = false;
             break;
@@ -6671,7 +6671,7 @@ bool CBlockUndo::WriteToDisk(CDiskBlockPos& pos, const uint256& hashBlock)
 
     // Write index header
     unsigned int nSize = fileout.GetSerializeSize(*this);
-    fileout << FLATDATA(Params().GetCurrentMessageStart(chainActive.Height())) << nSize;
+    fileout << FLATDATA(Params().MessageStart()) << nSize;
 
     // Write undo data
     long fileOutPos = ftell(fileout.Get());

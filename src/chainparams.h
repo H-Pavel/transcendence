@@ -48,15 +48,6 @@ public:
 
     const uint256& HashGenesisBlock() const { return hashGenesisBlock; }
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
-    const MessageStartChars& MessageStartNew() const { return pchMessageStartTranscendence; }
-    const MessageStartChars& GetCurrentMessageStart(int blockHeight) const
-    {
-        if (blockHeight > MAGIC_UPDATE_BLOCK_HEIGHT)
-        {
-            return MessageStartNew();
-        }
-        return MessageStart();
-    }
     const std::vector<unsigned char>& AlertKey() const { return vAlertPubKey; }
     int GetDefaultPort() const { return nDefaultPort; }
     const uint256& ProofOfWorkLimit() const { return bnProofOfWorkLimit; }
