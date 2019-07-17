@@ -418,7 +418,7 @@ bool CActiveMasternode::GetVinFromOutput(COutput out, CTxIn& vin, int& nTier, CP
     CScript pubScript;
 
     vin = CTxIn(out.tx->GetHash(), out.i);
-    nTier = GetMasternodeTierFromOutput(out.tx, out.i, chainActive.Height());
+    nTier = GetMasternodeTierFromOutput(out.tx->vout[out.i].nValue, chainActive.Height());
     pubScript = out.tx->vout[out.i].scriptPubKey; // the inputs PubKey
 
     CTxDestination address1;
@@ -475,7 +475,7 @@ vector<COutput> CActiveMasternode::SelectCoinsMasternode()
     auto currentBlock = chainActive.Height();
     // Filter
     BOOST_FOREACH (const COutput& out, vCoins) {
-        if (IsMasternodeOutput(out.tx, out.i, currentBlock)) {
+        if (IsMasternodeOutput(out.tx->vout[out.i].nValue, currentBlock)) {
             filteredCoins.push_back(out);
         }
     }

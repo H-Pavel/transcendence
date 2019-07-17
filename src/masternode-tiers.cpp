@@ -3,28 +3,25 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "masternode-tiers.h"
-#include "amount.h"
+#include <cmath>
 
-bool IsMasternodeOutput(const CWalletTx* tx, int index, int blockHeight)
+bool IsMasternodeOutput(CAmount nValue, int blockHeight)
 {
-    return (GetMasternodeTierFromOutput(tx, index, blockHeight) != MasternodeTiers::TIER_NONE);
+    return (GetMasternodeTierFromOutput(nValue, blockHeight) != MasternodeTiers::TIER_NONE);
 }
 
-int GetMasternodeTierFromOutput(const CWalletTx* tx, int index, int blockHeight)
+int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight)
 {
     int tierRet = MasternodeTiers::TIER_NONE;
 
-    if (index < 0 || index >= tx->vout.size())
-        return MasternodeTiers::TIER_NONE;
-
     if (blockHeight < TIER_BLOCK_HEIGHT) {
-        if (tx->vout[index].nValue == MASTERNODE_TIER_COINS[MasternodeTiers::TIER_1K] * COIN) {
+        if (nValue == MASTERNODE_TIER_COINS[MasternodeTiers::TIER_1K] * COIN) {
             tierRet = MasternodeTiers::TIER_1K;
         }
     }
     else {
         for (int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
-            if (tx->vout[index].nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
+            if (nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
                 tierRet = tier;
                 break;
             }
@@ -57,7 +54,7 @@ unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blo
         if (vecTierSizes[i] > 0) {
             nMod += distribution[i];
             nDenominator += distribution[i] * vecTierSizes[i];
-            weightedDistribution.push_back(make_pair(i, 0));
+            weightedDistribution.push_back(std::make_pair(i, 0));
         }
     }
 

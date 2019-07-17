@@ -8,7 +8,7 @@
 #include <cstdlib>
 
 #include "masternode-tiers.h"
-#include "amount.h"
+#include "primitives/transaction.h"
 
 using namespace std;
 
@@ -16,7 +16,6 @@ BOOST_AUTO_TEST_SUITE(tier_tests)
 
 BOOST_AUTO_TEST_CASE(test_tier_from_outputs)
 {
-    CWallet wallet;
     int nextLockTime = 0;
     int nInput = 0;
     unsigned int tiers[MasternodeTiers::TIER_NONE] = {MasternodeTiers::TIER_1K, MasternodeTiers::TIER_3K, MasternodeTiers::TIER_10K, MasternodeTiers::TIER_30K, MasternodeTiers::TIER_100K};
@@ -27,23 +26,16 @@ BOOST_AUTO_TEST_CASE(test_tier_from_outputs)
         tx.vout.resize(nInput + 1);
         tx.vout[nInput].nValue = MASTERNODE_TIER_COINS[i] * COIN;
 
-        CWalletTx wtx(&wallet, tx);
-
-        BOOST_CHECK(IsMasternodeOutput(&wtx, nInput, TIER_BLOCK_HEIGHT));
-        BOOST_CHECK(!IsMasternodeOutput(&wtx, nInput + 2, TIER_BLOCK_HEIGHT));
-        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtx, nInput, TIER_BLOCK_HEIGHT), tiers[i]);
-        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtx, nInput + 2, TIER_BLOCK_HEIGHT), MasternodeTiers::TIER_NONE);
+        BOOST_CHECK(IsMasternodeOutput(tx.vout[nInput].nValue, TIER_BLOCK_HEIGHT));
+        BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(tx.vout[nInput].nValue, TIER_BLOCK_HEIGHT), tiers[i]);
     }
     CMutableTransaction txNotMn;
     txNotMn.nLockTime = nextLockTime++;
     txNotMn.vout.resize(nInput + 1);
     txNotMn.vout[nInput].nValue = 1234 * COIN;
 
-    CWalletTx wtxNotMn(&wallet, txNotMn);
-
-    BOOST_CHECK(!IsMasternodeOutput(&wtxNotMn, nInput, TIER_BLOCK_HEIGHT));
-    BOOST_CHECK(!IsMasternodeOutput(&wtxNotMn, nInput + 2, TIER_BLOCK_HEIGHT));
-    BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(&wtxNotMn, nInput, TIER_BLOCK_HEIGHT), MasternodeTiers::TIER_NONE);
+    BOOST_CHECK(!IsMasternodeOutput(txNotMn.vout[nInput].nValue, TIER_BLOCK_HEIGHT));
+    BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(txNotMn.vout[nInput].nValue, TIER_BLOCK_HEIGHT), MasternodeTiers::TIER_NONE);
 }
 
 BOOST_AUTO_TEST_CASE(test_obfuscation_value)

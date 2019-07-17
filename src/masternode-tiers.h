@@ -5,7 +5,8 @@
 #ifndef MASTERNODE_TIERS_H
 #define MASTERNODE_TIERS_H
 
-#include "wallet.h"
+#include "amount.h"
+#include "uint256.h"
 
 enum MasternodeTiers { TIER_1K = 0, TIER_3K, TIER_10K, TIER_30K, TIER_100K, TIER_NONE};
 
@@ -14,8 +15,8 @@ const double TIER_OBFUSCATION_VALUES[MasternodeTiers::TIER_NONE] = {999.99, 2999
 const int TIER_BLOCK_HEIGHT = 517314;
 
 
-bool IsMasternodeOutput(const CWalletTx* tx, int index, int blockHeight);
-int GetMasternodeTierFromOutput(const CWalletTx* tx, int index, int blockHeight);
+bool IsMasternodeOutput(CAmount nValue, int blockHeight);
+int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight);
 double GetObfuscationValueForTier(int nTier);
 unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blockHash);
 
