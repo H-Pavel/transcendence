@@ -242,7 +242,7 @@ bool CActiveMasternode::SendMasternodePing(std::string& errorMessage)
 bool CActiveMasternode::Register(std::string strService, std::string strKeyMasternode, std::string strTxHash, std::string strOutputIndex, std::string& errorMessage)
 {
     CTxIn vin;
-    int nTier;
+    unsigned int nTier;
     CPubKey pubKeyCollateralAddress;
     CKey keyCollateralAddress;
     CPubKey pubKeyMasternode;
@@ -285,7 +285,7 @@ bool CActiveMasternode::Register(std::string strService, std::string strKeyMaste
     return Register(vin, nTier, CService(strService), keyCollateralAddress, pubKeyCollateralAddress, keyMasternode, pubKeyMasternode, errorMessage);
 }
 
-bool CActiveMasternode::Register(CTxIn vin, int nTier, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyMasternode, CPubKey pubKeyMasternode, std::string& errorMessage)
+bool CActiveMasternode::Register(CTxIn vin, unsigned int nTier, CService service, CKey keyCollateralAddress, CPubKey pubKeyCollateralAddress, CKey keyMasternode, CPubKey pubKeyMasternode, std::string& errorMessage)
 {
     CMasternodePing mnp(vin);
     if (!mnp.Sign(keyMasternode, pubKeyMasternode)) {
@@ -359,12 +359,12 @@ bool CActiveMasternode::Register(CTxIn vin, int nTier, CService service, CKey ke
     return true;
 }
 
-bool CActiveMasternode::GetMasterNodeVin(CTxIn& vin, int& nTier, CPubKey& pubkey, CKey& secretKey)
+bool CActiveMasternode::GetMasterNodeVin(CTxIn& vin, unsigned int& nTier, CPubKey& pubkey, CKey& secretKey)
 {
     return GetMasterNodeVin(vin, nTier, pubkey, secretKey, "", "");
 }
 
-bool CActiveMasternode::GetMasterNodeVin(CTxIn& vin, int& nTier, CPubKey& pubkey, CKey& secretKey, std::string strTxHash, std::string strOutputIndex)
+bool CActiveMasternode::GetMasterNodeVin(CTxIn& vin, unsigned int& nTier, CPubKey& pubkey, CKey& secretKey, std::string strTxHash, std::string strOutputIndex)
 {
     // Find possible candidates
     TRY_LOCK(pwalletMain->cs_wallet, fWallet);
@@ -413,7 +413,7 @@ bool CActiveMasternode::GetMasterNodeVin(CTxIn& vin, int& nTier, CPubKey& pubkey
 
 
 // Extract Masternode vin information from output
-bool CActiveMasternode::GetVinFromOutput(COutput out, CTxIn& vin, int& nTier, CPubKey& pubkey, CKey& secretKey)
+bool CActiveMasternode::GetVinFromOutput(COutput out, CTxIn& vin, unsigned int& nTier, CPubKey& pubkey, CKey& secretKey)
 {
     CScript pubScript;
 

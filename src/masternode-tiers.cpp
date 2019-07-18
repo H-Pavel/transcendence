@@ -10,9 +10,9 @@ bool IsMasternodeOutput(CAmount nValue, int blockHeight)
     return (GetMasternodeTierFromOutput(nValue, blockHeight) != MasternodeTiers::TIER_NONE);
 }
 
-int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight)
+unsigned int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight)
 {
-    int tierRet = MasternodeTiers::TIER_NONE;
+    unsigned int tierRet = MasternodeTiers::TIER_NONE;
 
     if (blockHeight < TIER_BLOCK_HEIGHT) {
         if (nValue == MASTERNODE_TIER_COINS[MasternodeTiers::TIER_1K] * COIN) {
@@ -20,7 +20,7 @@ int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight)
         }
     }
     else {
-        for (int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
+        for (unsigned int tier = MasternodeTiers::TIER_1K; tier != MasternodeTiers::TIER_NONE; tier++) {
             if (nValue == MASTERNODE_TIER_COINS[tier] * COIN) {
                 tierRet = tier;
                 break;
@@ -30,7 +30,7 @@ int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight)
     return tierRet;
 }
 
-double GetObfuscationValueForTier(int nTier)
+double GetObfuscationValueForTier(unsigned int nTier)
 {
     if (nTier >= MasternodeTiers::TIER_NONE || nTier < MasternodeTiers::TIER_1K) {
         return 0;
@@ -40,7 +40,7 @@ double GetObfuscationValueForTier(int nTier)
     }
 }
 
-unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blockHash)
+unsigned int CalculateWinningTier(const std::vector<size_t>& vecTierSizes, uint256 blockHash)
 {
     const unsigned int distribution[MasternodeTiers::TIER_NONE] = {1, 3, 10, 30, 100};
     double nDenominator = 0; // Summ( distribution[i]*count[i] )
@@ -48,6 +48,10 @@ unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blo
 
     //Contains pairs <tier number, weighted value>
     std::vector<std::pair<size_t, unsigned int>> weightedDistribution;
+
+    if (vecTierSizes.size() < MasternodeTiers::TIER_NONE) {
+        return MasternodeTiers::TIER_NONE;
+    }
 
     //Select tiers which contain nodes
     for (auto i = 0; i < MasternodeTiers::TIER_NONE; i++) {
@@ -59,7 +63,7 @@ unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blo
     }
 
     //Stop calculation if there are no nodes or the only single tier is presented in the network
-    if (weightedDistribution.size() == 0) {
+    if (weightedDistribution.empty()) {
         return MasternodeTiers::TIER_NONE;
     }
     else if (weightedDistribution.size() == 1) {
@@ -85,9 +89,9 @@ unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blo
 
     int nWinningTier = MasternodeTiers::TIER_NONE;
     unsigned int nCheckNumber = blockHash.Get64() % nMod;
-    for (auto k = 0; k < weightedDistribution.size(); k++) {
-        if (nCheckNumber < weightedDistribution[k].second) {
-            nWinningTier = weightedDistribution[k].first;
+    for (auto &el : weightedDistribution) {
+        if (nCheckNumber < el.second) {
+            nWinningTier = el.first;
             break;
         }
     }

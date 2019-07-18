@@ -33,11 +33,11 @@ private:
     bool SendMasternodePing(std::string& errorMessage);
 
     /// Register any Masternode
-    bool Register(CTxIn vin, int tier, CService service, CKey key, CPubKey pubKey, CKey keyMasternode, CPubKey pubKeyMasternode, std::string& errorMessage);
+    bool Register(CTxIn vin, unsigned int tier, CService service, CKey key, CPubKey pubKey, CKey keyMasternode, CPubKey pubKeyMasternode, std::string& errorMessage);
 
     /// Get 10000 TRANSCENDENCE input that can be used for the Masternode
-    bool GetMasterNodeVin(CTxIn& vin, int& tier, CPubKey& pubkey, CKey& secretKey, std::string strTxHash, std::string strOutputIndex);
-    bool GetVinFromOutput(COutput out, CTxIn& vin, int& tier, CPubKey& pubkey, CKey& secretKey);
+    bool GetMasterNodeVin(CTxIn& vin, unsigned int& tier, CPubKey& pubkey, CKey& secretKey, std::string strTxHash, std::string strOutputIndex);
+    bool GetVinFromOutput(COutput out, CTxIn& vin, unsigned int& tier, CPubKey& pubkey, CKey& secretKey);
 
 public:
     // Initialized by init.cpp
@@ -47,7 +47,7 @@ public:
     // Initialized while registering Masternode
     CTxIn vin;
     CService service;
-    int tier;
+    unsigned int tier;
 
     int status;
     std::string notCapableReason;
@@ -65,7 +65,7 @@ public:
     bool Register(std::string strService, std::string strKey, std::string strTxHash, std::string strOutputIndex, std::string& errorMessage);
 
     /// Get MASTERNODE_TIER_COINS[] TRANSCENDENCE input that can be used for the Masternode
-    bool GetMasterNodeVin(CTxIn& vin, int& tier, CPubKey& pubkey, CKey& secretKey);
+    bool GetMasterNodeVin(CTxIn& vin, unsigned int& tier, CPubKey& pubkey, CKey& secretKey);
     vector<COutput> SelectCoinsMasternode();
 
     /// Enable cold wallet mode (run a Masternode with no funds)

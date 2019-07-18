@@ -480,7 +480,7 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
 {
     LOCK(cs);
 
-    CMasternode* pBestMasternode = NULL;
+    CMasternode* pBestMasternode = nullptr;
     std::vector<pair<int64_t, CTxIn>> vecMasternodeLastPaid;
     std::vector<pair<int64_t, CTxIn>> vecMasternodeTiers[MasternodeTiers::TIER_NONE] = {};
 
@@ -519,8 +519,9 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
     if (fFilterSigTime && nCount < nMnCount / 3) return GetNextMasternodeInQueueForPayment(nBlockHeight, false, nCount);
 
     uint256 blockHash = 0;
-    if (!GetBlockHash(blockHash, nBlockHeight - 100)) {
-        LogPrint("masternodeman", "GetNextMasternodeInQueueForPayment ERROR - nHeight %d\n", nBlockHeight - 100);
+    const int BLOCK_INDENT = 100;
+    if (!GetBlockHash(blockHash, nBlockHeight - BLOCK_INDENT)) {
+        LogPrint("masternodeman", "GetNextMasternodeInQueueForPayment ERROR - nHeight %d\n", nBlockHeight - BLOCK_INDENT);
     }
     if (nBlockHeight < TIER_BLOCK_HEIGHT) {
     //Single tier - 1K
@@ -543,7 +544,7 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
 
 CMasternode* CMasternodeMan::GetWinningNode(std::vector<pair<int64_t, CTxIn>>& vecMasternodeLastPaid, uint256 blockHash)
 {
-    CMasternode* pBestMasternode = NULL;
+    CMasternode* pBestMasternode = nullptr;
 
     // Sort vector of last paid times high to low
     if (vecMasternodeLastPaid.size() > 1) {

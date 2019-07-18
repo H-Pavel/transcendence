@@ -16,8 +16,8 @@ const int TIER_BLOCK_HEIGHT = 524500;
 
 
 bool IsMasternodeOutput(CAmount nValue, int blockHeight);
-int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight);
-double GetObfuscationValueForTier(int nTier);
-unsigned int CalculateWinningTier(std::vector<size_t>& vecTierSizes, uint256 blockHash);
+unsigned int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight);
+double GetObfuscationValueForTier(unsigned int nTier);
+unsigned int CalculateWinningTier(const std::vector<size_t>& vecTierSizes, uint256 blockHash);
 
 #endif

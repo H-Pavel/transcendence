@@ -431,7 +431,7 @@ Value masternodedebug (const Array& params, bool fHelp)
     CTxIn vin = CTxIn();
     CPubKey pubkey = CScript();
     CKey key;
-    int tier;
+    unsigned int tier;
 
     if (!activeMasternode.GetMasterNodeVin(vin, tier, pubkey, key))
         throw runtime_error("Missing masternode input, please look at the documentation for instructions on masternode creation\n");
