@@ -50,6 +50,50 @@ double GetObfuscationValueForTier(unsigned int nTier)
     }
 }
 
+static unsigned int CalculateWeightedDistribution(unsigned int tierSize, unsigned int tierDistr, unsigned int nMod, double nDenominator)
+{
+    //Calculate weighted distribution: WD = modulus * (distribution*count) / ( Summ(distribution[i]*count[i]) )
+    unsigned int weightedValue = round(tierSize * tierDistr * nMod * 1.0 / nDenominator);
+    if (weightedValue == 0) {
+        weightedValue = 1;
+    }
+
+    return weightedValue;
+}
+
+static void CalculateWeightedDistribution(std::vector<std::pair<size_t, unsigned int>>& weightedDistribution, const std::vector<size_t>& vecTierSizes,
+                                          const unsigned int distribution[], unsigned int nMod, double nDenominator)
+{
+    unsigned int nPreviousWeight = 0;
+    for (auto j = 0; j < weightedDistribution.size() - 1; j++) {
+        auto curTier = weightedDistribution[j].first;
+
+        //Calculate weighted distribution: WD = modulus * (distribution*count) / ( Summ(distribution[i]*count[i]) )
+        unsigned int weightedValue = round(vecTierSizes[curTier] * distribution[curTier] * nMod * 1.0 / nDenominator);
+        if (weightedValue == 0) {
+            weightedValue = 1;
+        }
+        //Convert weighted distribution to the percent of the modulus
+        weightedDistribution[j].second = nPreviousWeight;
+        weightedDistribution[j].second += weightedValue;
+        nPreviousWeight = weightedDistribution[j].second;
+    }
+    weightedDistribution[weightedDistribution.size() - 1].second = nMod;
+}
+
+static unsigned int TierByHash(std::vector<std::pair<size_t, unsigned int>>& weightedDistribution, uint256 blockHash, unsigned int nMod)
+{
+    int nWinningTier = MasternodeTiers::TIER_NONE;
+    unsigned int nCheckNumber = blockHash.Get64() % nMod;
+    for (auto &el : weightedDistribution) {
+        if (nCheckNumber < el.second) {
+            nWinningTier = el.first;
+            break;
+        }
+    }
+    return nWinningTier;
+}
+
 unsigned int CalculateWinningTier(const std::vector<size_t>& vecTierSizes, uint256 blockHash)
 {
     const unsigned int distribution[MasternodeTiers::TIER_NONE] = {1, 3, 10, 30, 100};
@@ -80,31 +124,8 @@ unsigned int CalculateWinningTier(const std::vector<size_t>& vecTierSizes, uint2
         return weightedDistribution[0].first;
     }
 
-    unsigned int nPreviousWeight = 0;
-    for (auto j = 0; j < weightedDistribution.size() - 1; j++) {
-        auto curTier = weightedDistribution[j].first;
-
-        //Calculate weighted distribution: WD = modulus * (distribution*count) / ( Summ(distribution[i]*count[i]) )
-        unsigned int weightedValue = round(vecTierSizes[curTier] * distribution[curTier] * nMod * 1.0 / nDenominator);
-        if (weightedValue == 0) {
-            weightedValue = 1;
-        }
-        //Convert weighted distribution to the percent of the modulus
-        weightedDistribution[j].second = nPreviousWeight;
-        weightedDistribution[j].second += weightedValue;
-        nPreviousWeight = weightedDistribution[j].second;
-    }
-    weightedDistribution[weightedDistribution.size() - 1].second = nMod;
+    CalculateWeightedDistribution(weightedDistribution, vecTierSizes, distribution, nMod, nDenominator);
     //Now distribution is converted from values [1,3,10,30,100] to the weighted percents, e.g. [1, 4, 14, 44, 144] for modulus = 144
 
-    int nWinningTier = MasternodeTiers::TIER_NONE;
-    unsigned int nCheckNumber = blockHash.Get64() % nMod;
-    for (auto &el : weightedDistribution) {
-        if (nCheckNumber < el.second) {
-            nWinningTier = el.first;
-            break;
-        }
-    }
-
-    return nWinningTier;
+    return TierByHash(weightedDistribution, blockHash, nMod);
 }
