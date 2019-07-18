@@ -897,7 +897,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         if (IsSporkActive(SPORK_10_MASTERNODE_PAY_UPDATED_NODES)) return;
 
         CTxIn vin;
-        int nTier;
+        unsigned int nTier;
         CService addr;
         CPubKey pubkey;
         CPubKey pubkey2;
