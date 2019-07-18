@@ -730,8 +730,10 @@ Value listmasternodeconf (const Array& params, bool fHelp)
         mnObj.push_back(Pair("privateKey", mne.getPrivKey()));
         mnObj.push_back(Pair("txHash", mne.getTxHash()));
         mnObj.push_back(Pair("outputIndex", mne.getOutputIndex()));
-        mnObj.push_back(Pair("tier", (uint64_t)pmn->tier));
-        mnObj.push_back(Pair("tiercoins", (uint64_t)GetMastenodeTierCoins(pmn->tier)));
+        if (pmn) {
+            mnObj.push_back(Pair("tier", (uint64_t)pmn->tier));
+            mnObj.push_back(Pair("tiercoins", (uint64_t)GetMastenodeTierCoins(pmn->tier)));
+        }
         mnObj.push_back(Pair("status", strStatus));
         ret.push_back(mnObj);
     }
