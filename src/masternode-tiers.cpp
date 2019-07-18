@@ -30,6 +30,16 @@ unsigned int GetMasternodeTierFromOutput(CAmount nValue, int blockHeight)
     return tierRet;
 }
 
+unsigned int GetMastenodeTierCoins(unsigned int nTier)
+{
+    if (nTier >= MasternodeTiers::TIER_NONE || nTier < MasternodeTiers::TIER_1K) {
+        return 0;
+    }
+    else {
+        return MASTERNODE_TIER_COINS[nTier];
+    }
+}
+
 double GetObfuscationValueForTier(unsigned int nTier)
 {
     if (nTier >= MasternodeTiers::TIER_NONE || nTier < MasternodeTiers::TIER_1K) {

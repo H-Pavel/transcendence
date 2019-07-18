@@ -38,6 +38,17 @@ BOOST_AUTO_TEST_CASE(test_tier_from_outputs)
     BOOST_CHECK_EQUAL(GetMasternodeTierFromOutput(txNotMn.vout[nInput].nValue, TIER_BLOCK_HEIGHT), MasternodeTiers::TIER_NONE);
 }
 
+BOOST_AUTO_TEST_CASE(test_masternode_coins)
+{
+    BOOST_CHECK_EQUAL(GetMastenodeTierCoins(MasternodeTiers::TIER_1K), 1000);
+    BOOST_CHECK_EQUAL(GetMastenodeTierCoins(MasternodeTiers::TIER_3K), 3000);
+    BOOST_CHECK_EQUAL(GetMastenodeTierCoins(MasternodeTiers::TIER_10K), 10000);
+    BOOST_CHECK_EQUAL(GetMastenodeTierCoins(MasternodeTiers::TIER_30K), 30000);
+    BOOST_CHECK_EQUAL(GetMastenodeTierCoins(MasternodeTiers::TIER_100K), 100000);
+    BOOST_CHECK_EQUAL(GetMastenodeTierCoins(MasternodeTiers::TIER_NONE), 0);
+    BOOST_CHECK_EQUAL(GetMastenodeTierCoins(-2), 0);
+}
+
 BOOST_AUTO_TEST_CASE(test_obfuscation_value)
 {
     BOOST_TEST(GetObfuscationValueForTier(MasternodeTiers::TIER_1K) == 999.99, boost::test_tools::tolerance(0.0001));

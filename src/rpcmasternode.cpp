@@ -10,6 +10,7 @@
 #include "main.h"
 #include "masternode-budget.h"
 #include "masternode-payments.h"
+#include "masternode-tiers.h"
 #include "masternodeconfig.h"
 #include "masternodeman.h"
 #include "rpcserver.h"
@@ -256,6 +257,8 @@ Value listmasternodes(const Array& params, bool fHelp)
             "    \"rank\": n,           (numeric) Masternode Rank (or 0 if not enabled)\n"
             "    \"txhash\": \"hash\",    (string) Collateral transaction hash\n"
             "    \"outidx\": n,         (numeric) Collateral transaction output index\n"
+            "    \"tier\": n,         (numeric) Masternode tier\n"
+            "    \"tiercoins\": n,         (numeric) Amount of coins locked in the masternode\n"
             "    \"status\": s,         (string) Status (ENABLED/EXPIRED/REMOVE/etc)\n"
             "    \"addr\": \"addr\",      (string) Masternode Transcendence address\n"
             "    \"version\": v,        (numeric) Masternode protocol version\n"
@@ -301,6 +304,8 @@ Value listmasternodes(const Array& params, bool fHelp)
             obj.push_back(Pair("network", strNetwork));
             obj.push_back(Pair("txhash", strTxHash));
             obj.push_back(Pair("outidx", (uint64_t)oIdx));
+            obj.push_back(Pair("tier", (uint64_t)mn->tier));
+            obj.push_back(Pair("tiercoins", (uint64_t)GetMastenodeTierCoins(mn->tier)));
             obj.push_back(Pair("status", strStatus));
             obj.push_back(Pair("addr", CBitcoinAddress(mn->pubKeyCollateralAddress.GetID()).ToString()));
             obj.push_back(Pair("version", mn->protocolVersion));
@@ -391,6 +396,8 @@ Value masternodecurrent (const Array& params, bool fHelp)
             "{\n"
             "  \"protocol\": xxxx,        (numeric) Protocol version\n"
             "  \"txhash\": \"xxxx\",      (string) Collateral transaction hash\n"
+            "  \"tier\": n,         (numeric) Masternode tier\n"
+            "  \"tiercoins\": n,         (numeric) Amount of coins locked in the masternode\n"
             "  \"pubkey\": \"xxxx\",      (string) MN Public key\n"
             "  \"lastseen\": xxx,       (numeric) Time since epoch of last seen\n"
             "  \"activeseconds\": xxx,  (numeric) Seconds MN has been active\n"
@@ -404,6 +411,8 @@ Value masternodecurrent (const Array& params, bool fHelp)
 
         obj.push_back(Pair("protocol", (int64_t)winner->protocolVersion));
         obj.push_back(Pair("txhash", winner->vin.prevout.hash.ToString()));
+        obj.push_back(Pair("tier", (uint64_t)winner->tier));
+        obj.push_back(Pair("tiercoins", (uint64_t)GetMastenodeTierCoins(winner->tier)));
         obj.push_back(Pair("pubkey", CBitcoinAddress(winner->pubKeyCollateralAddress.GetID()).ToString()));
         obj.push_back(Pair("lastseen", (winner->lastPing == CMasternodePing()) ? winner->sigTime : (int64_t)winner->lastPing.sigTime));
         obj.push_back(Pair("activeseconds", (winner->lastPing == CMasternodePing()) ? 0 : (int64_t)(winner->lastPing.sigTime - winner->sigTime)));
@@ -686,6 +695,8 @@ Value listmasternodeconf (const Array& params, bool fHelp)
             "    \"privateKey\": \"xxxx\",   (string) masternode private key\n"
             "    \"txHash\": \"xxxx\",       (string) transaction hash\n"
             "    \"outputIndex\": n,       (numeric) transaction output index\n"
+            "    \"tier\": n,         (numeric) masternode tier\n"
+            "    \"tiercoins\": n,         (numeric) amount of coins locked in the masternode\n"
             "    \"status\": \"xxxx\"        (string) masternode status\n"
             "  }\n"
             "  ,...\n"
@@ -719,6 +730,8 @@ Value listmasternodeconf (const Array& params, bool fHelp)
         mnObj.push_back(Pair("privateKey", mne.getPrivKey()));
         mnObj.push_back(Pair("txHash", mne.getTxHash()));
         mnObj.push_back(Pair("outputIndex", mne.getOutputIndex()));
+        mnObj.push_back(Pair("tier", (uint64_t)pmn->tier));
+        mnObj.push_back(Pair("tiercoins", (uint64_t)GetMastenodeTierCoins(pmn->tier)));
         mnObj.push_back(Pair("status", strStatus));
         ret.push_back(mnObj);
     }
@@ -737,6 +750,8 @@ Value getmasternodestatus (const Array& params, bool fHelp)
             "{\n"
             "  \"txhash\": \"xxxx\",      (string) Collateral transaction hash\n"
             "  \"outputidx\": n,        (numeric) Collateral transaction output index number\n"
+            "  \"tier\": n,        (numeric) Masternode tier\n"
+            "  \"tiercoins\": n,        (numeric) Amount of coins locked in the masternode\n"
             "  \"netaddr\": \"xxxx\",     (string) Masternode network address\n"
             "  \"addr\": \"xxxx\",        (string) Transcendence address for masternode payments\n"
             "  \"status\": \"xxxx\",      (string) Masternode status\n"
@@ -754,6 +769,8 @@ Value getmasternodestatus (const Array& params, bool fHelp)
         Object mnObj;
         mnObj.push_back(Pair("txhash", activeMasternode.vin.prevout.hash.ToString()));
         mnObj.push_back(Pair("outputidx", (uint64_t)activeMasternode.vin.prevout.n));
+        mnObj.push_back(Pair("tier", (uint64_t)pmn->tier));
+        mnObj.push_back(Pair("tiercoins", (uint64_t)GetMastenodeTierCoins(pmn->tier)));
         mnObj.push_back(Pair("netaddr", activeMasternode.service.ToString()));
         mnObj.push_back(Pair("addr", CBitcoinAddress(pmn->pubKeyCollateralAddress.GetID()).ToString()));
         mnObj.push_back(Pair("status", activeMasternode.status));
